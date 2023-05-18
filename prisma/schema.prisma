@@ -148,6 +148,7 @@ model autoCalibration {
   skillSummaries skillSummary[]
   developmentExperiences developmentExperience[]
 }
+
 model request {
   applicationId Int @id @default(autoincrement())
   userId Int
