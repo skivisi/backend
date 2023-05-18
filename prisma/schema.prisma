@@ -1,0 +1,172 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model user {
+  userId Int @id @default(autoincrement())
+  email String @unique
+  employeeNumber Int
+  joinDate String
+  userName String
+  affiliation String
+  businessSituation String
+  password String
+  confirmPassword String
+  createdAt DateTime
+  updatedAt DateTime
+  skills           skill[]
+  skillPoints      skillPoint[]
+  specialAbilities spaecialAbility[]
+  specs            spec[]
+  requests         request[]
+}
+
+model skill {
+  skillId Int @id @default(autoincrement())
+  userId Int
+  InherentName String
+  InherentDescription String
+  numericalNumber Int
+  numericalExplain String
+  updatedAt DateTime
+  user user @relation(fields: [userId], references: [userId])
+}
+
+model skillPoint {
+  skillPointId Int @id @default(autoincrement())
+  userId Int
+  FR Int
+  BK Int
+  DB Int
+  SBR Int
+  AR Int
+  TS Int
+  COM Int
+  user user @relation(fields: [userId], references: [userId])
+}
+
+model spaecialAbility {
+  spaecialAbilityId Int @id @default(autoincrement())
+  userId Int
+  skillList String
+  skillSelection Boolean
+  user user @relation(fields: [userId], references: [userId])
+}
+
+model spec {
+  specId Int @id @default(autoincrement())
+  userId Int
+  github String
+  offHours String
+  createdAt DateTime
+  user user @relation(fields: [userId], references: [userId])
+  portfolios portfolio[]
+  skillSummaries skillSummary[]
+  sellingPoints sellingPoint[]
+  qualifications qualification[]
+  previousWorks previousWork[]
+  developmentExperiences developmentExperience[]
+
+}
+
+model portfolio {
+  portfolioId Int @id @default(autoincrement())
+  specId Int
+  heading String
+  url String
+  spec spec @relation(fields: [specId], references: [specId])
+}
+
+model skillSummary {
+  skillSummaryId Int @id @default(autoincrement())
+  specId Int
+  autoCalibrationId Int
+  spec spec @relation(fields: [specId], references: [specId])
+  autoCalibration autoCalibration @relation(fields: [autoCalibrationId], references: [autoCalibrationId])
+}
+
+model sellingPoint {
+  sellingPointId Int @id @default(autoincrement())
+  specId Int
+  title String
+  content String
+  spec spec @relation(fields: [specId], references: [specId])
+}
+
+model qualification {
+  qualificationId Int @id @default(autoincrement())
+  specId Int
+  credential String
+  acquisitionDate String
+  spec spec @relation(fields: [specId], references: [specId])
+}
+
+model previousWork {
+  previousWorkId Int @id @default(autoincrement())
+  specId Int
+  industry String
+  occupation String
+  JobDuties String
+  spec spec @relation(fields: [specId], references: [specId])
+}
+
+model developmentExperience {
+  developmentExperienceId Int @id @default(autoincrement())
+  specId Int
+  startDate String
+  duration String
+  assignedTask String
+  teamSize String
+  totalProjectHeadcount String
+  projectName String
+  jobDuties String
+  img String
+  autoCalibrationId Int
+  spec spec @relation(fields: [specId], references: [specId])
+  autoCalibration autoCalibration @relation(fields: [autoCalibrationId], references: [autoCalibrationId])
+}
+
+model autoCalibration {
+  autoCalibrationId Int @id @default(autoincrement())
+  skill String
+  membership Int
+  category Int
+  FR Int
+  CL Int
+  ML Int
+  QA Int
+  JAVA Int
+  PHP Int
+  skillSummaries skillSummary[]
+  developmentExperiences developmentExperience[]
+}
+
+model request {
+  applicationId Int @id @default(autoincrement())
+  userId Int
+  status Int
+  adminComment String
+  engineerComment String
+  adminId Int
+  createdAt DateTime
+  resultedAt DateTime
+   user user @relation(fields: [userId], references: [userId])
+   admin admin @relation(fields: [adminId], references: [adminId])
+}
+
+model admin {
+  adminId Int @id @default(autoincrement())
+  email String @unique
+  password String
+  name String
+  createdAt DateTime
+  requests request[]
+}
