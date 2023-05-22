@@ -16,7 +16,7 @@ model user {
   joinDate String
   userName String
   affiliation String
-  businessSituation String
+  businessSituation Boolean @default(false)
   password String
   confirmPassword String
   createdAt DateTime
