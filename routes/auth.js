@@ -72,4 +72,60 @@ router.get("/login", async (req, res) => {
   }
 });
 
+//管理者の登録
+router.post("/admin/register", async (req, res) => {
+  try {
+    const {
+      email,
+      name,
+      password,
+    } = req.body;
+     //バリデーション
+    if (password.length < 8 || password.length > 16) {
+      return res
+        .status(400)
+        .json({ error: "パスワードは8文字以上16文字以内で登録してください" });
+    }
+
+    const admins = await prisma.admin.create({
+      data: {
+        email: email,
+        name: name,
+        password: password,
+        createdAt: new Date(), // 現在の日時を設定
+      },
+    });
+    return res.json(admins);
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+//管理者のログイン
+router.get("/admin/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // emailとpasswordを使用してユーザーを検索
+    let user = await prisma.admin.findUnique({ where: { email } });
+
+    // ユーザーが存在しない場合
+    if (!user) {
+      return res.status(401).json({ error: "認証に失敗しました" });
+    }
+
+    // パスワードの照合
+    if (user.password !== password) {
+      return res.status(401).json({ error: "パスワードが異なります" });
+    }
+
+    // ユーザーの情報を返す
+    //変数名passwordをuserPasswordに変更
+    const { password: userPassword,  ...other } = user;
+    return res.json(other);
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = router;
