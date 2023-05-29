@@ -2,6 +2,8 @@ const { PrismaClient } = require("@prisma/client");
 const router = require("express").Router();
 
 const prisma = new PrismaClient();
+const CryptoJS = require("crypto-js"); // CryptoJSライブラリを読み込む
+
 //新規登録
 router.post("/register", async (req, res) => {
   try {
@@ -11,6 +13,7 @@ router.post("/register", async (req, res) => {
       joinDate,
       userName,
       affiliation,
+      businessSituation,
       password,
       confirmPassword,
     } = req.body;
@@ -26,7 +29,8 @@ router.post("/register", async (req, res) => {
         .status(400)
         .json({ error: "パスワードは8文字以上16文字以内で登録してください" });
     }
-
+    const businessSituations =
+      businessSituation === "アサイン中" ? true : false;
     const users = await prisma.user.create({
       data: {
         email: email,
@@ -34,6 +38,7 @@ router.post("/register", async (req, res) => {
         joinDate: joinDate,
         userName: userName,
         affiliation: affiliation,
+        businessSituation: businessSituations,
         password: password,
         confirmPassword: confirmPassword,
         createdAt: new Date(), // 現在の日時を設定
@@ -66,21 +71,39 @@ router.get("/login", async (req, res) => {
     // ユーザーの情報を返す
     //変数名passwordをuserPasswordに変更
     const { password: userPassword, confirmPassword, ...other } = user;
+    // user.idを暗号化
+    const encryptedUserId = CryptoJS.AES.encrypt(
+      user.userId.toString(),
+      "encryptionKey"
+    ).toString();
+
+    // Cookieをセットする
+    res.cookie("userId", encryptedUserId, { maxAge: 86400000 }); // 24時間有効なCookie
+
     return res.json(other);
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
 });
 
+// ログアウト(Cookieを削除)するAPI
+router.get("/logout", async (req, res) => {
+  try {
+    // Cookieの削除
+    res.clearCookie("userId");
+
+    return res.json({ message: "ログアウトしました" });
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+
 //管理者の登録
 router.post("/admin/register", async (req, res) => {
   try {
-    const {
-      email,
-      name,
-      password,
-    } = req.body;
-     //バリデーション
+    const { email, name, password } = req.body;
+    //バリデーション
     if (password.length < 8 || password.length > 16) {
       return res
         .status(400)
@@ -121,7 +144,7 @@ router.get("/admin/login", async (req, res) => {
 
     // ユーザーの情報を返す
     //変数名passwordをuserPasswordに変更
-    const { password: userPassword,  ...other } = user;
+    const { password: userPassword, ...other } = user;
     return res.json(other);
   } catch (err) {
     return res.status(500).json({ error: err.message });
