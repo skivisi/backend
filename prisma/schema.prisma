@@ -16,7 +16,7 @@ model user {
   joinDate String
   userName String
   affiliation String
-  businessSituation Boolean @default(false)
+  businessSituation Boolean
   password String
   confirmPassword String
   createdAt DateTime
@@ -33,8 +33,6 @@ model skill {
   userId Int
   InherentName String
   InherentDescription String
-  numericalNumber Int
-  numericalExplain String
   updatedAt DateTime
   user user @relation(fields: [userId], references: [userId])
 }
