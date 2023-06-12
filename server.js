@@ -6,6 +6,8 @@ const authRoute = require("./routes/auth");
 const userRoute = require("./routes/users");
 const requestRoute = require("./routes/request");
 const skillRoute = require("./routes/skill");
+const specRoute = require("./routes/spec");
+const uploadRoute = require("./routes/upload");
 
 const prisma = new PrismaClient();
 app.use(express.json());
@@ -15,6 +17,9 @@ app.use("/api/auth", authRoute);
 app.use("/api/users", userRoute);
 app.use("/api/request", requestRoute);
 app.use("/api/skill", skillRoute);
+app.use("/api/spec",specRoute);
+app.use("/api/upload", uploadRoute);
+
 
 app.listen(PORT, () => {
   console.log("サーバーが起動中・・・");
