@@ -85,10 +85,16 @@ model portfolio {
 model skillSummary {
   skillSummaryId Int @id @default(autoincrement())
   specId Int
-  autoCalibrationId Int
+  environment String
+  programmingLanguage String
+  framework String
+  library String
+  cloud String
+  tool String
+  developmentDomain String
   spec spec @relation(fields: [specId], references: [specId])
-  autoCalibration autoCalibration @relation(fields: [autoCalibrationId], references: [autoCalibrationId])
 }
+
 
 model sellingPoint {
   sellingPointId Int @id @default(autoincrement())
@@ -118,6 +124,7 @@ model previousWork {
 model developmentExperience {
   developmentExperienceId Int @id @default(autoincrement())
   specId Int
+  startYear String
   startDate String
   duration String
   assignedTask String
@@ -126,15 +133,16 @@ model developmentExperience {
   projectName String
   jobDuties String
   img String
-  autoCalibrationId Int
+  environments String
+  programmingLanguages String
+  frameworks String
+  tools String
   spec spec @relation(fields: [specId], references: [specId])
-  autoCalibration autoCalibration @relation(fields: [autoCalibrationId], references: [autoCalibrationId])
 }
 
 model autoCalibration {
   autoCalibrationId Int @id @default(autoincrement())
   skill String
-  membership Int
   category Int
   FR Int
   CL Int
@@ -142,8 +150,6 @@ model autoCalibration {
   QA Int
   JAVA Int
   PHP Int
-  skillSummaries skillSummary[]
-  developmentExperiences developmentExperience[]
 }
 
 model request {
