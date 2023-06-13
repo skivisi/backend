@@ -8,6 +8,7 @@ const requestRoute = require("./routes/request");
 const skillRoute = require("./routes/skill");
 const specRoute = require("./routes/spec");
 const uploadRoute = require("./routes/upload");
+const autoCalibrationRoute = require("./routes/autoCalibration");
 
 const prisma = new PrismaClient();
 app.use(express.json());
@@ -19,6 +20,7 @@ app.use("/api/request", requestRoute);
 app.use("/api/skill", skillRoute);
 app.use("/api/spec",specRoute);
 app.use("/api/upload", uploadRoute);
+app.use("/api/autoCalibration",autoCalibrationRoute)
 
 
 app.listen(PORT, () => {
