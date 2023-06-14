@@ -29,8 +29,8 @@ router.post("/register", async (req, res) => {
         .status(400)
         .json({ error: "パスワードは8文字以上16文字以内で登録してください" });
     }
-    const businessSituations =
-      businessSituation === "アサイン中" ? true : false;
+    // const businessSituations =
+    //   businessSituation === "アサイン中" ? true : false;
     const users = await prisma.user.create({
       data: {
         email: email,
@@ -38,7 +38,7 @@ router.post("/register", async (req, res) => {
         joinDate: joinDate,
         userName: userName,
         affiliation: affiliation,
-        businessSituation: businessSituations,
+        businessSituation: businessSituation,
         password: password,
         confirmPassword: confirmPassword,
         createdAt: new Date(), // 現在の日時を設定

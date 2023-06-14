@@ -16,7 +16,7 @@ model user {
   joinDate String
   userName String
   affiliation String
-  businessSituation Boolean
+  businessSituation String
   password String
   confirmPassword String
   createdAt DateTime
@@ -85,13 +85,13 @@ model portfolio {
 model skillSummary {
   skillSummaryId Int @id @default(autoincrement())
   specId Int
-  environment String
-  programmingLanguage String
-  framework String
-  library String
-  cloud String
-  tool String
-  developmentDomain String
+  environment String[]
+  programmingLanguage String[]
+  framework String[]
+  library String[]
+  cloud String[]
+  tool String[]
+  developmentDomain String[]
   spec spec @relation(fields: [specId], references: [specId])
 }
 
@@ -133,10 +133,10 @@ model developmentExperience {
   projectName String
   jobDuties String
   img String
-  environments String
-  programmingLanguages String
-  frameworks String
-  tools String
+  environments String[]
+  programmingLanguages String[]
+  frameworks String[]
+  tools String[]
   spec spec @relation(fields: [specId], references: [specId])
 }
 
