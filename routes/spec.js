@@ -23,7 +23,7 @@ router.post("/post/:userId", async (req, res) => {
   }
 });
 
-//specIdの取得
+//userが作成した最新のspecIdの取得
 router.get("/get/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
@@ -44,6 +44,63 @@ router.get("/get/:userId", async (req, res) => {
     return res.status(500).json({ error: err.message });
   }
 });
+
+//指定されたspecIdに紐付いたportfolio、skillSummary、sellingPoint、qualification、previousWork、developmentExperienceのテーブルの情報を取得するAPI
+router.get("/getData/:specId", async (req, res) => {
+  try {
+    const { specId } = req.params;
+    const specNumber = parseInt(specId);
+
+    const specPortfolio = await prisma.portfolio.findMany({
+      where: {
+        specId: specNumber,
+      },
+    });
+
+    const specSkillSummaries = await prisma.skillSummary.findMany({
+      where: {
+        specId: specNumber,
+      },
+    });
+
+    const specSellingPoint = await prisma.sellingPoint.findMany({
+      where: {
+        specId: specNumber,
+      },
+    });
+
+    const specQualification = await prisma.qualification.findMany({
+      where: {
+        specId: specNumber,
+      },
+    });
+
+    const specPreviousWork = await prisma.previousWork.findMany({
+      where: {
+        specId: specNumber,
+      },
+    });
+
+    const specDevelopmentExperience =
+      await prisma.developmentExperience.findMany({
+        where: {
+          specId: specNumber,
+        },
+      });
+
+    return res.json({
+      portfolio: specPortfolio,
+      skillSummary: specSkillSummaries,
+      sellingPoint: specSellingPoint,
+      qualification: specQualification,
+      previousWork: specPreviousWork,
+      developmentExperience: specDevelopmentExperience,
+    });
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
 
 //portfolio,skillSummary,sellingPoint,qualification,previousWork,developmentExperienceのテーブルに情報をPOST
 router.post("/postData/:specId", async (req, res) => {
@@ -136,6 +193,63 @@ router.post("/postData/:specId", async (req, res) => {
     });
   } catch (err) {
     return res.status(500).json({ error: err.message });
+  }
+});
+
+router.post("/autoCalibration", async (req, res) => {
+  try {
+    const { skillSummaries } = req.body;
+
+    // スキルの配列をフラット化して重複を削除
+    const skills = Array.from(
+      new Set(
+        skillSummaries.flatMap((summary) => [
+          ...summary.environment,
+          ...summary.programmingLanguage,
+          ...summary.framework,
+          ...summary.library,
+          ...summary.cloud,
+          ...summary.tool,
+          // ...summary.developmentDomain,
+        ])
+      )
+    );
+
+    const existingSkills = await prisma.autoCalibration.findMany({
+      where: {
+        skill: { in: skills },
+      },
+      select: {
+        skill: true,
+      },
+    });
+
+    const existingSkillsSet = new Set(
+      existingSkills.map((skill) => skill.skill)
+    );
+
+    const skillsToAdd = skills.filter((skill) => !existingSkillsSet.has(skill));
+
+    const createdAutoCalibration = await prisma.autoCalibration.createMany({
+      data: skillsToAdd.map((skill) => ({
+        skill,
+        category: 0, // カテゴリーの値を適切に設定してください
+        FR: 0, // FRの値を適切に設定してください
+        CL: 0, // CLの値を適切に設定してください
+        ML: 0, // MLの値を適切に設定してください
+        QA: 0, // QAの値を適切に設定してください
+        JAVA: 0, // JAVAの値を適切に設定してください
+        PHP: 0, // PHPの値を適切に設定してください
+      })),
+    });
+
+    return res.json({
+      message: "Skills added to autoCalibration table.",
+      createdAutoCalibration,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 
