@@ -210,7 +210,7 @@ router.post("/autoCalibration", async (req, res) => {
           ...summary.library,
           ...summary.cloud,
           ...summary.tool,
-          // ...summary.developmentDomain,
+          ...summary.developmentDomain,
         ])
       )
     );
@@ -233,13 +233,13 @@ router.post("/autoCalibration", async (req, res) => {
     const createdAutoCalibration = await prisma.autoCalibration.createMany({
       data: skillsToAdd.map((skill) => ({
         skill,
-        category: 0, // カテゴリーの値を適切に設定してください
-        FR: 0, // FRの値を適切に設定してください
-        CL: 0, // CLの値を適切に設定してください
-        ML: 0, // MLの値を適切に設定してください
-        QA: 0, // QAの値を適切に設定してください
-        JAVA: 0, // JAVAの値を適切に設定してください
-        PHP: 0, // PHPの値を適切に設定してください
+        category: 0,
+        FR: 0,
+        CL: 0,
+        ML: 0,
+        QA: 0,
+        JAVA: 0,
+        PHP: 0,
       })),
     });
 
