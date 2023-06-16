@@ -72,7 +72,7 @@ router.put("/denial/:applicationId", async (req, res) => {
   }
 });
 //エンジニアが承認、否認を受け取る
-router.get("/receive", async (req, res) => {
+router.post("/receive", async (req, res) => {
   try {
     const { userId } = req.body;
 

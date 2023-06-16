@@ -51,7 +51,7 @@ router.post("/register", async (req, res) => {
   }
 });
 //ログイン
-router.get("/login", async (req, res) => {
+router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -125,7 +125,7 @@ router.post("/admin/register", async (req, res) => {
 });
 
 //管理者のログイン
-router.get("/admin/login", async (req, res) => {
+router.post("/admin/login", async (req, res) => {
   try {
     const { email, password } = req.body;
 
