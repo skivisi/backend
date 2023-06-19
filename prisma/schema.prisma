@@ -63,6 +63,7 @@ model spec {
   userId Int
   github String
   offHours String
+  searchs Boolean @default(true)
   createdAt DateTime
   user user @relation(fields: [userId], references: [userId])
   portfolios portfolio[]

@@ -9,14 +9,33 @@ router.post("/post/:userId", async (req, res) => {
     const { userId } = req.params;
     const { github, offHours } = req.body;
 
+    const existingSpec = await prisma.spec.findFirst({
+      where: {
+        userId: parseInt(userId),
+      },
+    });
+
+    if (existingSpec) {
+      // 既存のレコードが存在する場合はsearchsをfalseに変更
+      await prisma.spec.update({
+        where: {
+          specId: existingSpec.specId,
+        },
+        data: {
+          searchs: false,
+        },
+      });
+    }
+
     const specs = await prisma.spec.create({
       data: {
         userId: parseInt(userId),
         github: github,
         offHours: offHours,
-        createdAt: new Date(), // 現在の日時を設定
+        createdAt: new Date(),
       },
     });
+
     return res.json(specs);
   } catch (err) {
     return res.status(500).json({ error: err.message });
@@ -100,7 +119,6 @@ router.get("/getData/:specId", async (req, res) => {
     return res.status(500).json({ error: err.message });
   }
 });
-
 
 //portfolio,skillSummary,sellingPoint,qualification,previousWork,developmentExperienceのテーブルに情報をPOST
 router.post("/postData/:specId", async (req, res) => {
