@@ -30,6 +30,7 @@ router.get("/accept", async (req, res) => {
     //statusが1のものを複数受け取る
     const requestedApplications = await prisma.request.findMany({
       where: { status: 1 },
+      include: { user: true },
     });
 
     const requests =
@@ -46,9 +47,10 @@ router.put("/approval/:applicationId", async (req, res) => {
   try {
     const { applicationId } = req.params;
     const { adminId } = req.body;
+    const adminNumber = parseInt(adminId)
     const requestedApplications = await prisma.request.update({
       where: { applicationId: parseInt(applicationId) },
-      data: { status: 3, adminId, resultedAt: new Date() },
+      data: { status: 3, adminId:adminNumber, resultedAt: new Date() },
     });
 
     return res.json(requestedApplications);
@@ -61,9 +63,10 @@ router.put("/denial/:applicationId", async (req, res) => {
   try {
     const { applicationId } = req.params;
     const { adminId, adminComment } = req.body;
+    const adminNumber = parseInt(adminId)
     const requestedApplications = await prisma.request.update({
       where: { applicationId: parseInt(applicationId) },
-      data: { status: 2, adminId, adminComment, resultedAt: new Date() },
+      data: { status: 2, adminId:adminNumber, adminComment, resultedAt: new Date() },
     });
 
     return res.json(requestedApplications);
@@ -72,9 +75,9 @@ router.put("/denial/:applicationId", async (req, res) => {
   }
 });
 //エンジニアが承認、否認を受け取る
-router.post("/receive", async (req, res) => {
+router.get("/receive/:userId", async (req, res) => {
   try {
-    const { userId } = req.body;
+    const { userId } = req.params;
 
     // statusが2または3であり、userIdにひもずく情報を取得
     const requestedApplications = await prisma.request.findMany({

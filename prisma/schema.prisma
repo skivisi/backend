@@ -55,6 +55,7 @@ model spaecialAbility {
   userId Int
   skillList String
   skillSelection Boolean
+  tagColor Int
   user user @relation(fields: [userId], references: [userId])
 }
 

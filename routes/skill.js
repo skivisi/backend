@@ -35,6 +35,7 @@ router.post("/postSkillData/:userId", async (req, res) => {
       data: abilities.map((ability) => ({
         skillList: ability.property,
         skillSelection: ability.value,
+        tagColor:ability.color,
         userId: parseInt(userId),
       })),
     });
