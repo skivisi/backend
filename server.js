@@ -5,7 +5,7 @@ const PORT = 8000;
 const cors = require("cors");
 app.use(
   cors({
-    origin: "http://localhost:3000", //アクセス許可するオリジン
+    origin: ["http://localhost:3000", "http://127.0.0.1:3000"], //アクセス許可するオリジン
     credentials: true, //レスポンスヘッダーにAccess-Control-Allow-Credentials追加
   })
 );
@@ -17,6 +17,7 @@ const specRoute = require("./routes/spec");
 const uploadRoute = require("./routes/upload");
 const autoCalibrationRoute = require("./routes/autoCalibration");
 const searchRoute = require("./routes/search");
+const businessSituationRoute = require("./routes/businessSituation");
 
 const prisma = new PrismaClient();
 app.use(express.json());
@@ -30,6 +31,7 @@ app.use("/api/spec", specRoute);
 app.use("/api/upload", uploadRoute);
 app.use("/api/autoCalibration", autoCalibrationRoute);
 app.use("/api/search", searchRoute);
+app.use("/api/businessSituation", businessSituationRoute);
 
 app.listen(PORT, () => {
   console.log("サーバーが起動中・・・");
