@@ -18,7 +18,7 @@ router.get("/", async (req, res) => {
           specialAbilities: true,
           specs: true,
           requests: true,
-        }, 
+        },
       });
     } else {
       return res.status(400).json({ error: "userIdを指定してください" });

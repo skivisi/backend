@@ -28,7 +28,6 @@ router.get("/users", async (req, res) => {
   }
 });
 
-
 // 絞り込み検索
 router.get("/integration", async (req, res) => {
   const affiliation = req.query.affiliation;
@@ -63,10 +62,13 @@ router.get("/integration", async (req, res) => {
                   skillSummaryValues.length > 0
                     ? skillSummaryValues.map((value) => ({
                         OR: [
+                          { environment: { hasEvery: value } },
                           { programmingLanguage: { hasEvery: value } },
                           { framework: { hasEvery: value } },
                           { library: { hasEvery: value } },
                           { cloud: { hasEvery: value } },
+                          { tool: { hasEvery: value } },
+                          { developmentDomain: { hasEvery: value } },
                         ],
                       }))
                     : [],
