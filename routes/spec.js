@@ -42,7 +42,7 @@ router.post("/post/:userId", async (req, res) => {
   }
 });
 
-//userが作成した最新のspecIdの取得
+//userが作成した最新のspecId及びspecIdに紐付いたportfolio、skillSummary、sellingPoint、qualification、previousWork、developmentExperienceのテーブルの情報を取得するAPI
 router.get("/get/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
@@ -51,7 +51,15 @@ router.get("/get/:userId", async (req, res) => {
     let spec = await prisma.spec.findFirst({
       where: { userId: userNumber },
       orderBy: { createdAt: "desc" },
-      select: { specId: true },
+      select: {
+        specId: true,
+        portfolios: true,
+        skillSummaries: true,
+        sellingPoints: true,
+        qualifications: true,
+        previousWorks: true,
+        developmentExperiences: true,
+      },
     });
 
     if (!spec) {
@@ -65,60 +73,60 @@ router.get("/get/:userId", async (req, res) => {
 });
 
 //指定されたspecIdに紐付いたportfolio、skillSummary、sellingPoint、qualification、previousWork、developmentExperienceのテーブルの情報を取得するAPI
-router.get("/getData/:specId", async (req, res) => {
-  try {
-    const { specId } = req.params;
-    const specNumber = parseInt(specId);
+// router.get("/getData/:specId", async (req, res) => {
+//   try {
+//     const { specId } = req.params;
+//     const specNumber = parseInt(specId);
 
-    const specPortfolio = await prisma.portfolio.findMany({
-      where: {
-        specId: specNumber,
-      },
-    });
+//     const specPortfolio = await prisma.portfolio.findMany({
+//       where: {
+//         specId: specNumber,
+//       },
+//     });
 
-    const specSkillSummaries = await prisma.skillSummary.findMany({
-      where: {
-        specId: specNumber,
-      },
-    });
+//     const specSkillSummaries = await prisma.skillSummary.findMany({
+//       where: {
+//         specId: specNumber,
+//       },
+//     });
 
-    const specSellingPoint = await prisma.sellingPoint.findMany({
-      where: {
-        specId: specNumber,
-      },
-    });
+//     const specSellingPoint = await prisma.sellingPoint.findMany({
+//       where: {
+//         specId: specNumber,
+//       },
+//     });
 
-    const specQualification = await prisma.qualification.findMany({
-      where: {
-        specId: specNumber,
-      },
-    });
+//     const specQualification = await prisma.qualification.findMany({
+//       where: {
+//         specId: specNumber,
+//       },
+//     });
 
-    const specPreviousWork = await prisma.previousWork.findMany({
-      where: {
-        specId: specNumber,
-      },
-    });
+//     const specPreviousWork = await prisma.previousWork.findMany({
+//       where: {
+//         specId: specNumber,
+//       },
+//     });
 
-    const specDevelopmentExperience =
-      await prisma.developmentExperience.findMany({
-        where: {
-          specId: specNumber,
-        },
-      });
+//     const specDevelopmentExperience =
+//       await prisma.developmentExperience.findMany({
+//         where: {
+//           specId: specNumber,
+//         },
+//       });
 
-    return res.json({
-      portfolio: specPortfolio,
-      skillSummary: specSkillSummaries,
-      sellingPoint: specSellingPoint,
-      qualification: specQualification,
-      previousWork: specPreviousWork,
-      developmentExperience: specDevelopmentExperience,
-    });
-  } catch (err) {
-    return res.status(500).json({ error: err.message });
-  }
-});
+//     return res.json({
+//       portfolio: specPortfolio,
+//       skillSummary: specSkillSummaries,
+//       sellingPoint: specSellingPoint,
+//       qualification: specQualification,
+//       previousWork: specPreviousWork,
+//       developmentExperience: specDevelopmentExperience,
+//     });
+//   } catch (err) {
+//     return res.status(500).json({ error: err.message });
+//   }
+// });
 
 //portfolio,skillSummary,sellingPoint,qualification,previousWork,developmentExperienceのテーブルに情報をPOST
 router.post("/postData/:specId", async (req, res) => {

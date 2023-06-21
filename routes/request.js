@@ -85,7 +85,7 @@ router.get("/receive/:userId", async (req, res) => {
         status: {
           in: [2, 3], // statusが2または3であることを指定
         },
-        userId: userId, // userIdにひもずく情報を取得
+        userId: parseInt(userId), // userIdにひもずく情報を取得
       },
     });
 
