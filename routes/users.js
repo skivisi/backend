@@ -10,7 +10,16 @@ router.get("/", async (req, res) => {
     let user;
 
     if (userId) {
-      user = await prisma.user.findUnique({ where: { userId: userId } });
+      user = await prisma.user.findUnique({
+        where: { userId: userId },
+        include: {
+          skills: true,
+          skillPoints: true,
+          specialAbilities: true,
+          specs: true,
+          requests: true,
+        },
+      });
     } else {
       return res.status(400).json({ error: "userIdを指定してください" });
     }
