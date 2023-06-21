@@ -5,7 +5,7 @@ const PORT = 8000;
 const cors = require("cors");
 app.use(
   cors({
-    origin: "http://localhost:3000", //アクセス許可するオリジン
+    origin: ["http://localhost:3000", "http://127.0.0.1:3000"], //アクセス許可するオリジン
     credentials: true, //レスポンスヘッダーにAccess-Control-Allow-Credentials追加
   })
 );
