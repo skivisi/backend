@@ -7,10 +7,10 @@ const prisma = new PrismaClient();
 router.put("/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
-    const { requestBody } = req.body;
+    const { businessSituation } = req.body;
     const users = await prisma.user.update({
       where: { userId: parseInt(userId) },
-      data: { businessSituation: requestBody, updatedAt: new Date() },
+      data: { businessSituation: businessSituation, updatedAt: new Date() },
     });
 
     const { password, confirmPassword, ...other } = users;

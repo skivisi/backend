@@ -33,9 +33,9 @@ router.post("/postSkillData/:userId", async (req, res) => {
 
     const spaecialAbilities = await prisma.spaecialAbility.createMany({
       data: abilities.map((ability) => ({
-        skillList: ability.property,
-        skillSelection: ability.value,
-        tagColor:ability.color,
+        skillList: ability.skillList,
+        skillSelection: ability.skillSelection,
+        tagColor:ability.tagColor,
         userId: parseInt(userId),
       })),
     });
@@ -84,14 +84,14 @@ router.put("/update/:userId", async (req, res) => {
 
     const updatedAbilities = await Promise.all(
       abilities.map(async (ability) => {
-        const { property, value } = ability;
+        const { skillList, skillSelection } = ability;
         const updatedAbility = await prisma.spaecialAbility.updateMany({
           where: {
             userId: parseInt(userId),
-            skillList: property,
+            skillList: skillList,
           },
           data: {
-            skillSelection: value,
+            skillSelection: skillSelection,
           },
         });
         return updatedAbility;
