@@ -126,8 +126,8 @@ model previousWork {
 model developmentExperience {
   developmentExperienceId Int @id @default(autoincrement())
   specId Int
-  startYear String
-  startDate String
+  startYear Int
+  startDate Int
   duration String
   assignedTask String
   teamSize String
