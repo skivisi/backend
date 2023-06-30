@@ -1,5 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
 const express = require("express");
+const path = require('path');
 const app = express();
 const PORT = 8000;
 const cors = require("cors");
@@ -21,7 +22,6 @@ const businessSituationRoute = require("./routes/businessSituation");
 
 const prisma = new PrismaClient();
 app.use(express.json());
-
 //ミドルウェア
 app.use("/api/auth", authRoute);
 app.use("/api/users", userRoute);
@@ -32,6 +32,7 @@ app.use("/api/upload", uploadRoute);
 app.use("/api/autoCalibration", autoCalibrationRoute);
 app.use("/api/search", searchRoute);
 app.use("/api/businessSituation", businessSituationRoute);
+app.use('/public', express.static(path.join(__dirname, 'public')));
 
 app.listen(PORT, () => {
   console.log("サーバーが起動中・・・");
