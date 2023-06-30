@@ -3,7 +3,7 @@ const router = require("express").Router();
 
 const prisma = new PrismaClient();
 
-//specテーブルへのPOUT
+//specテーブルへのPOST
 router.post("/post/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
