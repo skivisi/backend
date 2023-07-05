@@ -20,10 +20,10 @@ beforeAll(() => {
   global.prisma = prisma;
 
   // あなたのルートハンドラ
-  const handler = require('./users'); // ルートハンドラの実際のパスに置き換えてください
+  const handler = require('../routes/users'); // ルートハンドラの実際のパスに置き換えてください
 
   app.use(express.json());
-  app.use("/user", handler); // Prismaのモックをハンドラに渡します
+  app.use("/users", handler); // Prismaのモックをハンドラに渡します
 });
 
 afterAll(() => {
@@ -33,8 +33,8 @@ afterAll(() => {
 
 describe('GET /user', () => {
   it('responds with 200 status code', async () => {
-    const response = await request(app).get('/user?userId=1');
-    console.log(response.body)
+    const response = await request(app).get('/users?userId=1');
+    console.log(response.error)
     expect(response.statusCode).toBe(200);
     // 必要に応じてモックデータの検証を追加
     expect(response.body.userId).toBe(mockUser.userId);
