@@ -72,13 +72,13 @@ router.post("/login", async (req, res) => {
     //変数名passwordをuserPasswordに変更
     const { password: userPassword, confirmPassword, ...other } = user;
     // user.idを暗号化
-    const encryptedUserId = CryptoJS.AES.encrypt(
-      user.userId.toString(),
-      "encryptionKey"
-    ).toString();
+    // const encryptedUserId = CryptoJS.AES.encrypt(
+    //   user.userId.toString(),
+    //   "encryptionKey"
+    // ).toString();
 
     // Cookieをセットする
-    res.cookie("userId", encryptedUserId, { maxAge: 86400000 }); // 24時間有効なCookie
+    // res.cookie("userId", encryptedUserId, { maxAge: 86400000 }); // 24時間有効なCookie
 
     return res.json(other);
   } catch (err) {
@@ -150,5 +150,6 @@ router.post("/admin/login", async (req, res) => {
     return res.status(500).json({ error: err.message });
   }
 });
+
 
 module.exports = router;
