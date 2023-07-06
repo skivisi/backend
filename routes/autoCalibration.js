@@ -35,9 +35,10 @@ router.get('/get', async (req, res) => {
     const autoCalibrations = await prisma.autoCalibration.findMany();
     res.json(autoCalibrations);
   } catch (error) {
-    console.error('Error retrieving autoCalibrations:', error);
     res.status(500).json({ error: 'Failed to fetch autoCalibrations' });
   }
 });
+
+
 
 module.exports = router;
