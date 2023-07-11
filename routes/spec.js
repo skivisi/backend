@@ -221,7 +221,7 @@ router.post("/postData/:specId", async (req, res) => {
     return res.status(500).json({ error: err.message });
   }
 });
-
+//スキル要約にないスキルを自動補完テーブルにpost
 router.post("/autoCalibration", async (req, res) => {
   try {
     const { skillSummaries } = req.body;
