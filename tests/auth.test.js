@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const request = require("supertest");
+const { mockPrisma } = require("@prisma/client");
 
 jest.mock("@prisma/client", () => {
   const mockPrisma = {
@@ -25,7 +26,6 @@ app.use("/auth", handler);
 
 //ユーザーの新規登録のテストケース
 describe("POST/user/register", () => {
-  const { mockPrisma } = require("@prisma/client");
   //ユーザーの新規登録が成功するテストケース
   it("should return 200 and created user", async () => {
     const mockUser1 = {
@@ -96,7 +96,6 @@ describe("POST/user/register", () => {
 
 //ユーザーログインのテストケース
 describe("POST /user/login", () => {
-  const { mockPrisma } = require("@prisma/client");
   //ログイン成功のテストケース
   it("successful login", async () => {
     const mockUser = {
@@ -170,8 +169,6 @@ describe("POST /user/login", () => {
 
 //管理者の新規登録のテストケース
 describe("POST /admin/register", () => {
-  const { mockPrisma } = require("@prisma/client");
-
   // 管理者の新規登録が成功するテストケース
   it("should return 200 and created admin", async () => {
     const mockAdmin = {
@@ -229,8 +226,6 @@ describe("POST /admin/register", () => {
 
 //管理者ログインのテストケース
 describe("POST /admin/login", () => {
-  const { mockPrisma } = require("@prisma/client");
-
   // ログイン成功のテストケース
   it("successful login", async () => {
     const mockAdmin = {

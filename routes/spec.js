@@ -9,17 +9,19 @@ router.post("/post/:userId", async (req, res) => {
     const { userId } = req.params;
     const { github, offHours } = req.body;
 
-    const existingSpec = await prisma.spec.findFirst({
+    const existingSpecs = await prisma.spec.findMany({
       where: {
         userId: parseInt(userId),
       },
     });
 
-    if (existingSpec) {
+    if (existingSpecs.length > 0) {
       // 既存のレコードが存在する場合はsearchsをfalseに変更
-      await prisma.spec.update({
+      await prisma.spec.updateMany({
         where: {
-          specId: existingSpec.specId,
+          specId: {
+            in: existingSpecs.map((spec) => spec.specId),
+          },
         },
         data: {
           searchs: false,
@@ -134,7 +136,7 @@ router.post("/postData/:specId", async (req, res) => {
     const { specId } = req.params;
     const specNumber = parseInt(specId);
 
-    const {
+    let {
       portfolios,
       skillSummaries,
       sellingPoints,
@@ -142,6 +144,12 @@ router.post("/postData/:specId", async (req, res) => {
       previousWorks,
       developmentExperiences,
     } = req.body;
+    //  const portfolios = req.body.portfolios || [];
+    //  const skillSummaries = req.body.skillSummaries || [];
+    //  const sellingPoints = req.body.sellingPoints || [];
+    //  const qualifications = req.body.qualifications || [];
+    //  const previousWorks = req.body.previousWorks || [];
+    //  const developmentExperiences = req.body.developmentExperiences || [];
 
     const specPortfolio = await prisma.portfolio.createMany({
       data: portfolios.map((auto) => ({
@@ -209,7 +217,7 @@ router.post("/postData/:specId", async (req, res) => {
         })),
       });
 
-    return res.json({
+    return res.status(200).json({
       portfolio: specPortfolio,
       skillSummary: specSkillSummaries,
       sellingPoint: specSellingPoint,
@@ -221,7 +229,7 @@ router.post("/postData/:specId", async (req, res) => {
     return res.status(500).json({ error: err.message });
   }
 });
-
+//自動補完テーブルに存在しないスキル要約のスキルを自動補完テーブルにPOST
 router.post("/autoCalibration", async (req, res) => {
   try {
     const { skillSummaries } = req.body;
@@ -274,8 +282,8 @@ router.post("/autoCalibration", async (req, res) => {
       createdAutoCalibration,
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal server error" });
+    // console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
