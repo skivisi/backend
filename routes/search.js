@@ -56,20 +56,12 @@ router.get("/integration", async (req, res) => {
         specs: {
           some: {
             searchs: true,
-            skillSummaries: {
+            finds: {
               every: {
                 AND:
                   skillSummaryValues.length > 0
                     ? skillSummaryValues.map((value) => ({
-                        OR: [
-                          { environment: { hasEvery: value } },
-                          { programmingLanguage: { hasEvery: value } },
-                          { framework: { hasEvery: value } },
-                          { library: { hasEvery: value } },
-                          { cloud: { hasEvery: value } },
-                          { tool: { hasEvery: value } },
-                          { developmentDomain: { hasEvery: value } },
-                        ],
+                        OR: [{ findItems: { hasEvery: value } }],
                       }))
                     : [],
               },

@@ -216,6 +216,44 @@ router.post("/postData/:specId", async (req, res) => {
           tools: auto.tools,
         })),
       });
+      // findItems 配列の初期化
+      const findItems = [];
+      // skillSummaries のデータを findItems 配列に追加
+    skillSummaries.forEach(item => {
+      findItems.push(
+        item.environment,
+        item.programmingLanguage,
+        item.framework,
+        item.library,
+        item.cloud,
+        item.tool,
+        item.developmentDomain
+      );
+    });
+    // developmentExperiences のデータを findItems 配列に追加
+    developmentExperiences.forEach(item => {
+      findItems.push(
+        item.environments,
+        item.programmingLanguages,
+        item.frameworks,
+        item.tools
+      );
+    });
+
+    // findItems の中に入れ子の配列がある場合、それを平坦化
+    const tempFlattenedItems = [].concat.apply([], findItems);
+    // 重複する要素を取り除くために Set オブジェクトを使用
+    const uniqueSet = new Set(tempFlattenedItems);
+    // Set の内容を配列に変換
+    const flattenedFindItems = [...uniqueSet];
+
+    // find テーブルにデータを挿入
+    const specFind = await prisma.find.createMany({
+      data: {
+        specId: specNumber,
+        findItems: flattenedFindItems,
+      },
+    });
 
     return res.status(200).json({
       portfolio: specPortfolio,
@@ -224,6 +262,7 @@ router.post("/postData/:specId", async (req, res) => {
       qualification: specQualification,
       previousWork: specPreviousWork,
       developmentExperience: specDevelopmentExperience,
+      find: specFind
     });
   } catch (err) {
     return res.status(500).json({ error: err.message });

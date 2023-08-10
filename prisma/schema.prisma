@@ -73,7 +73,7 @@ model spec {
   qualifications qualification[]
   previousWorks previousWork[]
   developmentExperiences developmentExperience[]
-
+  finds find[]
 }
 
 model portfolio {
@@ -142,6 +142,13 @@ model developmentExperience {
   spec spec @relation(fields: [specId], references: [specId])
 }
 
+model find {
+  findId Int @id @default(autoincrement())
+  specId Int
+  findItems String[]
+  spec spec @relation(fields: [specId], references: [specId])
+}
+
 model autoCalibration {
   autoCalibrationId Int @id @default(autoincrement())
   skill String
@@ -166,6 +173,8 @@ model request {
    user user @relation(fields: [userId], references: [userId])
    admin admin @relation(fields: [adminId], references: [adminId])
 }
+
+
 
 model admin {
   adminId Int @id @default(autoincrement())
