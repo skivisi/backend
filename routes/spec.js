@@ -144,13 +144,7 @@ router.post("/postData/:specId", async (req, res) => {
       previousWorks,
       developmentExperiences,
     } = req.body;
-    //  const portfolios = req.body.portfolios || [];
-    //  const skillSummaries = req.body.skillSummaries || [];
-    //  const sellingPoints = req.body.sellingPoints || [];
-    //  const qualifications = req.body.qualifications || [];
-    //  const previousWorks = req.body.previousWorks || [];
-    //  const developmentExperiences = req.body.developmentExperiences || [];
-
+  
     const specPortfolio = await prisma.portfolio.createMany({
       data: portfolios.map((auto) => ({
         specId: specNumber,
@@ -268,29 +262,47 @@ router.post("/postData/:specId", async (req, res) => {
     return res.status(500).json({ error: err.message });
   }
 });
-//自動補完テーブルに存在しないスキル要約のスキルを自動補完テーブルにPOST
+
+//自動補完テーブルに存在しないスキル要約のスキル及び開発経験のスキルを自動補完テーブルにPOST
 router.post("/autoCalibration", async (req, res) => {
   try {
-    const { skillSummaries } = req.body;
+    const { skillSummaries,developmentExperiences } = req.body;
 
-    // スキルの配列をフラット化して重複を削除
-    const skills = Array.from(
-      new Set(
-        skillSummaries.flatMap((summary) => [
-          ...summary.environment,
-          ...summary.programmingLanguage,
-          ...summary.framework,
-          ...summary.library,
-          ...summary.cloud,
-          ...summary.tool,
-          ...summary.developmentDomain,
-        ])
-      )
-    );
+     // findItems 配列の初期化
+     const findItems = [];
+     // skillSummaries のデータを findItems 配列に追加
+   skillSummaries.forEach(item => {
+     findItems.push(
+       item.environment,
+       item.programmingLanguage,
+       item.framework,
+       item.library,
+       item.cloud,
+       item.tool,
+       item.developmentDomain
+     );
+   });
+   // developmentExperiences のデータを findItems 配列に追加
+   developmentExperiences.forEach(item => {
+     findItems.push(
+       item.environments,
+       item.programmingLanguages,
+       item.frameworks,
+       item.tools
+     );
+   });
+
+   // findItems の中に入れ子の配列がある場合、それを平坦化
+   const tempFlattenedItems = [].concat.apply([], findItems);
+   // 重複する要素を取り除くために Set オブジェクトを使用
+   const uniqueSet = new Set(tempFlattenedItems);
+   // Set の内容を配列に変換
+   const flattenedFindItems = [...uniqueSet];
+
 
     const existingSkills = await prisma.autoCalibration.findMany({
       where: {
-        skill: { in: skills },
+        skill: { in: flattenedFindItems },
       },
       select: {
         skill: true,
@@ -301,8 +313,8 @@ router.post("/autoCalibration", async (req, res) => {
       existingSkills.map((skill) => skill.skill)
     );
 
-    const skillsToAdd = skills.filter((skill) => !existingSkillsSet.has(skill));
-
+    const skillsToAdd = flattenedFindItems.filter((skill) => !existingSkillsSet.has(skill));
+    if (skillsToAdd.length > 0) {
     const createdAutoCalibration = await prisma.autoCalibration.createMany({
       data: skillsToAdd.map((skill) => ({
         skill,
@@ -320,8 +332,14 @@ router.post("/autoCalibration", async (req, res) => {
       message: "Skills added to autoCalibration table.",
       createdAutoCalibration,
     });
+  } else {
+     // skillsToAddが存在しない場合
+  return res.json({
+    message: "No new skills to add to autoCalibration table.",
+    createdAutoCalibration: [],
+  })}
   } catch (error) {
-    // console.error(error);
+    console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
