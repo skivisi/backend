@@ -134,7 +134,7 @@ router.post("/admin/login", async (req, res) => {
 
     // ユーザーが存在しない場合
     if (!user) {
-      return res.status(401).json({ error: "認証に失敗しました" });
+      return res.status(401).json({ error: "このメールアドレスは登録されていません。" });
     }
 
     // パスワードの照合
