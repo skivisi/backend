@@ -8,6 +8,17 @@ router.post("/post", async (req, res) => {
   try {
     const { userId, engineerComment } = req.body;
 
+    //requestテーブルに存在する同じuserIdを持ち、statusが1のstatusを4に変更（論理削除）。
+    await prisma.request.updateMany({
+      where: {
+        userId: userId,
+        status: 1
+      },
+      data: {
+        status: 4
+      }
+    });
+
     const requests = await prisma.request.create({
       data: {
         userId: userId,
