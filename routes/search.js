@@ -53,21 +53,34 @@ router.get("/integration", async (req, res) => {
     const users = await prisma.user.findMany({
       where: {
         ...whereCondition,
-        specs: {
-          some: {
-            searchs: true,
-            finds: {
-              every: {
-                AND:
-                  skillSummaryValues.length > 0
-                    ? skillSummaryValues.map((value) => ({
-                        OR: [{ findItems: { hasEvery: value } }],
-                      }))
-                    : [],
+        OR: [
+          {
+            specs: {
+              some: {
+                searchs: true,
+                finds: {
+                  every: {
+                    AND:
+                      skillSummaryValues.length > 0
+                        ? skillSummaryValues.map((value) => ({
+                            OR: [{ findItems: { hasEvery: value } }],
+                          }))
+                        : [],
+                  },
+                },
               },
             },
           },
-        },
+          // spacsを持っていない（つまり、スペックシートの登録をしていない）userも抽出
+          ...(skillSummaryValues.length === 0 ? [
+          //spacsと一切関連付けられていないuserとspacsとは関連付けられているが他の条件（このクエリの場合、空の {} なので特定の条件は無い）を満たすspecsが1つもないuserを抽出
+            {
+              specs: {
+                none: {},
+              },
+            }
+          ] : []),
+        ],
       },
       select: {
         userId: true,
