@@ -16,15 +16,16 @@ router.get("/", async (req, res) => {
           skills: true,
           skillPoints: true,
           specialAbilities: true,
-          specs: true,
-          requests: true,
+          specs: {
+            where: { searchs: true }
+          },
         },
       });
     } else {
       return res.status(400).json({ error: "userIdを指定してください" });
     }
 
-    const { password, confirmPassword, ...other } = user;
+    const { password, confirmPassword,createdAt,email,joinDate,requests,updatedAt, ...other } = user;
     return res.status(200).json(other);
   } catch (err) {
     return res.status(500).json({ error: err.message });
